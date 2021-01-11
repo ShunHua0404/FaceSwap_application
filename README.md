@@ -8,3 +8,5 @@ https://drive.google.com/file/d/1lsQS8hOCquMFKJFhK_z-n03ixWGkjT2P/view
 人像卡通化onnx模型：photo2cartoon_weights.onnx 谷歌网盘，存放在models路径下。
 
 https://github.com/YadiraF/PRNet/tree/master/Data
+
+python combine.py --photo_path ./images/face04.jpg --save_path ./images/test.jpg
