@@ -7,6 +7,9 @@ https://drive.google.com/file/d/1lsQS8hOCquMFKJFhK_z-n03ixWGkjT2P/view
 卡通画开源数据：cartoon_data，包含trainB和testB。
 人像卡通化onnx模型：photo2cartoon_weights.onnx 谷歌网盘，存放在models路径下。
 
+PRNet Train Data:
+https://drive.google.com/file/d/1UoE-XuW1SDLUjZmJPkIZ1MLxvQFgmTFH/view
+
 https://github.com/YadiraF/PRNet/tree/master/Data
 
 python combine.py --photo_path ./images/face04.jpg --save_path ./images/test.jpg
