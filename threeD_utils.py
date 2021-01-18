@@ -38,10 +38,12 @@ class fun001:
         
         self.cas = cv2.CascadeClassifier('./data1/haarcascade_frontalface_alt2.xml')
         self.triangles = np.loadtxt('./Data/uv-data/triangles.txt').astype(np.int32)
+        self.pos_predictor = PosPrediction(256, 256)
+        self.pos_predictor.restore('./Data/net-data/256_256_resfcn256_weight')
     # def showimg():
     
     def gbrtorgb(self, img):
-        self.img = img
+        #self.img = img
        
         img = img[...,::-1]
         plt.imshow(img)
@@ -84,13 +86,13 @@ class fun001:
         return cropped_img, tform, img
 
     def fun001_3(self, cropped_img, tform):
-        self.cropped_img = cropped_img
-        self.tform = tform
-        pos_predictor = PosPrediction(256, 256)
-        print(pos_predictor)
-        pos_predictor.restore('./Data/net-data/256_256_resfcn256_weight')
+        # self.cropped_img = cropped_img
+        # self.tform = tform
+        #pos_predictor = PosPrediction(256, 256)
+        print(self.pos_predictor)
+        #pos_predictor.restore('./Data/net-data/256_256_resfcn256_weight')
 
-        cropped_pos = pos_predictor.predict(cropped_img)
+        cropped_pos = self.pos_predictor.predict(cropped_img)
 
         cropped_vertices = np.reshape(cropped_pos, [-1, 3]).T
         z = cropped_vertices[2,:].copy()/tform.params[0,0]
@@ -181,7 +183,7 @@ class fun001:
         return img_3D, tri_tex
 
     def fun001_7(self, vertices, img_3D, img, tri_tex):
-        self.tri_tex = tri_tex
+        #self.tri_tex = tri_tex
         trans_mat = angle2matrix((0,30,0))
 
         # 旋转坐标
