@@ -11,7 +11,7 @@ parser.add_argument('--photo_path', type=str, help='input photo path')
 parser.add_argument('--save_path', type=str, help='cartoon save path')
 args = parser.parse_args()
 
-os.makedirs(os.path.dirname(args.save_path), exist_ok=True)
+#os.makedirs(os.path.dirname(args.save_path), exist_ok=True)
 
 class Photo2Cartoon:
     def __init__(self):
