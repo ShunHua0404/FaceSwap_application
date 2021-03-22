@@ -9,72 +9,64 @@ def extract_index_nparray(nparray):
         index = num
         break
     return index
-
+# Load images
 tduv2t = threetool()
 face_path = "./images/photo_test.jpg"
 face_path_2 = "./images/face04.jpg"
 
-#Face_1
+## Face_1 scale
 img = cv2.imread(face_path)
-height = int (img.shape[0]*0.2)
-width = int (img.shape[1]*0.2)
-img = cv2.resize(img, (width, height), interpolation=cv2.INTER_CUBIC)
-
-#Face_2
+if img.shape[0] > 500 or img.shape[1] > 500:
+    height = int (img.shape[0]*0.2)
+    width = int (img.shape[1]*0.2)
+    img = cv2.resize(img, (width, height), interpolation=cv2.INTER_CUBIC)
+## Face_2 scale
 img2 = cv2.imread(face_path_2)
-# height = int (img2.shape[0]*0.2)
-# width = int (img2.shape[1]*0.2)
-# img2 = cv2.resize(img2, (width, height), interpolation=cv2.INTER_CUBIC)
-
-
-# bbox, cropped_img = tduv2t.cutimg(img)
+if img2.shape[0] > 1000 or img2.shape[1] > 1000:
+    height = int (img2.shape[0]*0.5)
+    width = int (img2.shape[1]*0.5)
+    img2 = cv2.resize(img2, (width, height), interpolation=cv2.INTER_CUBIC)
+# Image to gray
 img_gray = cv2.cvtColor(img.copy(), cv2.COLOR_BGR2GRAY)
 img2_gray = cv2.cvtColor(img2.copy(), cv2.COLOR_BGR2GRAY)
 mask = np.zeros_like(img)
-# pos = tduv2t.pre(cropped_img)
-#Face_1
+##Face_1 PRN pre pos
 pos = tduv2t.pre_v2(img)
-face_kps = tduv2t.face_kps(pos)
-
+face_kps = tduv2t.face_kps(pos)#shape = (68,3)
 face_kps_arry = []
+
 for i in range(face_kps.shape[0]):
     x = face_kps[i, 0]
     y = face_kps[i, 1]
 
     face_kps_arry.append((x, y))
+
+#Face_1
+img_1 = img/255 #why(?) 
+face_68kps_img = (tduv2t.draw_kps(img_1, face_kps))
+points = np.array(face_kps_arry, np.int32)
+face68points_convexhull = cv2.convexHull(points)
 ###########################################
 
-#Face_2
+#Face_2 PRN pre pos2
 pos2 = tduv2t.pre_v2(img2)
 face2_kps = tduv2t.face_kps(pos2)
-
 face2_kps_arry = []
+
 for i in range(face2_kps.shape[0]):
     x = face2_kps[i, 0]
     y = face2_kps[i, 1]
 
     face2_kps_arry.append((x, y))
-face2_kps_arry = np.array(face2_kps_arry, np.int32)
 
-
-print(face_kps_arry)
-print(img)
-# face_68kps_img = (tduv2t.draw_kps(cropped_img, face_kps))
-#Face_1
-img_1 = img/255 #why(?) 
-face_68kps_img = (tduv2t.draw_kps(img_1, face_kps))
 #Face_2
 img_2 = img2/255
-
 face2_68kps_img = (tduv2t.draw_kps(img_2, face2_kps))
-
-points = np.array(face_kps_arry, np.int32)
-print(points)
-face68points_convexhull = cv2.convexHull(points)
-
 points2 = np.array(face2_kps_arry, np.int32)
 face68points2_convexhull = cv2.convexHull(points2)
 
+
+#########################################################
 cv2.polylines(face_68kps_img, [face68points_convexhull], True, (0, 0, 255), 2)
 cv2.fillConvexPoly(mask, face68points_convexhull, 255)
 # face_mask_image = cv2.bitwise_and(face_68kps_img, face_68kps_img, mask = mask)
@@ -88,7 +80,6 @@ subdiv = cv2.Subdiv2D(rect)
 subdiv.insert(face_kps_arry)
 triangles = subdiv.getTriangleList()
 triangles = np.array(triangles, dtype = np.int32)
-
 indexes_triangles = []
 for t in triangles:
     pt1 = (t[0], t[1])
@@ -113,8 +104,6 @@ for t in triangles:
     # cv2.line(Delaunay_triangul_img, pt2,pt3, (0, 0,255))
     # cv2.line(Delaunay_triangul_img, pt1,pt3, (0, 0,255))
 # print(triangles)
-print(indexes_triangles)
-
 
 #triangulation of both faces
 for triangles_index in indexes_triangles:
@@ -142,9 +131,9 @@ for triangles_index in indexes_triangles:
     # cv2.line(img, tr1_pt1, tr1_pt3, (0, 0,255))
 
     # Triangulation of second face
-    tr2_pt1 = tuple(face2_kps_arry[triangles_index[0]])
-    tr2_pt2 = tuple(face2_kps_arry[triangles_index[1]])
-    tr2_pt3 = tuple(face2_kps_arry[triangles_index[2]])
+    tr2_pt1 = tuple(points2[triangles_index[0]])
+    tr2_pt2 = tuple(points2[triangles_index[1]])
+    tr2_pt3 = tuple(points2[triangles_index[2]])
 
     triangle2 = np.array([tr2_pt1, tr2_pt2, tr2_pt3], np.int32)
     rect2 = cv2.boundingRect(triangle2)
@@ -173,14 +162,18 @@ for triangles_index in indexes_triangles:
     
     # Reconstruct destination face
     triangle_area = img2_new_face[y: y + h, x: x+w]
-    
+    # cv2.imshow("triangle",triangle_area)
     triangle_area_gray = cv2.cvtColor(triangle_area, cv2.COLOR_BGR2GRAY)
-    _, mask_triangles_designed = cv2.threshold(triangle_area_gray, 1, 255, cv2.THRESH_BINARY_INV)
+    _, mask_triangles_designed = cv2.threshold(triangle_area_gray, 50, 255, cv2.THRESH_BINARY_INV)
+    # cv2.imshow("mask",mask_triangles_designed)
     warped_triangle = cv2.bitwise_and(warped_triangle, warped_triangle, mask=mask_triangles_designed)
+    # cv2.imshow("warped_triangle", warped_triangle)
 
     
     triangle_area = cv2.add(triangle_area, warped_triangle)
     img2_new_face[y: y + h, x: x+w] = triangle_area
+    # cv2.imshow("123", triangle_area)
+    # cv2.waitKey(0)
 
 # Face swapped(putting 1st into  2nd)
 img2_new_face_gray = cv2.cvtColor(img2_new_face, cv2.COLOR_BGR2GRAY)
@@ -216,4 +209,13 @@ cv2.imshow("image1",img)
 cv2.imshow("image2",img2)
 cv2.imshow("result", result)
 cv2.imshow("seamlessclone", seamlessclone)
+
+# Save Result imgaes
+# cv2.imwrite("./Result_images/newface.jpg", img2_new_face)
+# cv2.imwrite("./Result_images/background.jpg", background)
+# cv2.imwrite("./Result_images/image1.jpg",img)
+# cv2.imwrite("./Result_images/image2.jpg",img2)
+# cv2.imwrite("./Result_images/result.jpg", result)
+# cv2.imwrite("./Result_images/seamlessclone.jpg", seamlessclone)
+
 cv2.waitKey(0)
