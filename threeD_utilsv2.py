@@ -113,7 +113,7 @@ class threetool:
         all_vertices = np.reshape(original_pos, [256*256, -1])
         vertices = all_vertices[self.face_ind, :]
 
-        return original_pos, vertices
+        return original_pos, vertices, center
 
     def pre(self, img):
         pos = self.pos_predictor.predict(img)
