@@ -54,9 +54,55 @@ class PRNetfacetool:
         composedImg[maskIndices[0], maskIndices[1]] = weights[:, np.newaxis] * src[maskIndices[0], maskIndices[1]] + (1 - weights[:, np.newaxis]) * dst[maskIndices[0], maskIndices[1]]
 
         return composedImg
+###############################################################
+    def PRNetvideo(self, img, video_path):
+        cap = cv2.VideoCapture(video_path)
+        width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        
+        width, height = width, height
+        n = 1
+        while height > 1080 or width > 1080 :
+            n = n-0.1
+            if n < 0:
+                break
+            height = int (height*n)
+            width = int (width*n)
+       
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+        outPRNet = cv2.VideoWriter('./videos/PRNetvideo.mov',fourcc, 20.0,(width, height))
 
+        h = int (img.shape[0]*0.2)
+        w = int (img.shape[1]*0.2)
+        img = cv2.resize(img, (w, h), interpolation=cv2.INTER_CUBIC)
+        print("start")
+        while True:
+            _, frame = cap.read()
+            if not _ :
+                break
+            frame = cv2.resize(frame, (width, height),interpolation=cv2.INTER_CUBIC)
+            print("frameshape",frame.shape)
+            print("imgshape",img.shape)
+            cv2.imwrite("./Result_images/bugimg.jpg",frame)
+            if  self.IS_face(frame) == False:
+                outPRNet.write(frame)
+                print("No swap")
+            else:
+                frame = self.PRNetfaceswap(frame, img)
+                # frame = self.PRNetdrawrect(frame)
+                outPRNet.write(frame)
+                print("face")
+            cv2.imshow("resframe", frame)
+            
 
+            key = cv2.waitKey(1)
+            if key == 27:
+                cap.release()
+                cv2.destrouAllWindows()
+                break
 
+        print("Face Swap Finished")
+###############################################################
     def PRNetfaceswap(self, img, ref_img):
         # first person
         # img = cv2.imread("./images/photo_test.jpg")
@@ -117,9 +163,9 @@ class PRNetfacetool:
         new_image = new_image.astype(imgdtype)
         img = img*255
         img = img.astype(imgdtype)
-        SeamlessCloneimg = cv2.seamlessClone(new_image, img, facemask_test, center, cv2.NORMAL_CLONE )
-        return SeamlessCloneimg
-        # return new_image
+        # SeamlessCloneimg = cv2.seamlessClone(new_image, img, facemask_test, center, cv2.NORMAL_CLONE )
+        # return SeamlessCloneimg
+        return new_image
 
 
 if __name__ == '__main__':
