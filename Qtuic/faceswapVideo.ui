@@ -52,14 +52,14 @@
          </size>
         </property>
         <property name="text">
-         <string>PushButton</string>
+         <string>選擇相片</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="pushButton_start">
         <property name="text">
-         <string>PushButton</string>
+         <string>執行換臉</string>
         </property>
        </widget>
       </item>
@@ -72,7 +72,7 @@
          </size>
         </property>
         <property name="text">
-         <string>PushButton</string>
+         <string>選擇影片</string>
         </property>
        </widget>
       </item>
