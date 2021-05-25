@@ -59,22 +59,12 @@ class PRNetfacetool:
         cap = cv2.VideoCapture(video_path)
         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        
-        width, height = width, height
-        n = 1
-        while height > 1080 or width > 1080 :
-            n = n-0.1
-            if n < 0:
-                break
-            height = int (height*n)
-            width = int (width*n)
-       
+        # print(height, width)
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-        outPRNet = cv2.VideoWriter('./videos/PRNetvideo.mov',fourcc, 20.0,(width, height))
-
         h = int (img.shape[0]*0.2)
         w = int (img.shape[1]*0.2)
         img = cv2.resize(img, (w, h), interpolation=cv2.INTER_CUBIC)
+        outPRNet = cv2.VideoWriter('./videos/PRNetvideo.mov',fourcc, 20.0,(width, height))
         print("start")
         while True:
             _, frame = cap.read()
@@ -92,7 +82,7 @@ class PRNetfacetool:
                 # frame = self.PRNetdrawrect(frame)
                 outPRNet.write(frame)
                 print("face")
-            cv2.imshow("resframe", frame)
+            cv2.imshow("frame", frame)
             
 
             key = cv2.waitKey(1)
@@ -105,11 +95,7 @@ class PRNetfacetool:
 ###############################################################
     def PRNetfaceswap(self, img, ref_img):
         # first person
-        # img = cv2.imread("./images/photo_test.jpg")
         imgdtype = img.dtype
-        # height = int (img.shape[0]*0.2)
-        # width = int (img.shape[1]*0.2)
-        # img = cv2.resize(img, (width, height), interpolation=cv2.INTER_CUBIC)
         [h, w, _] = img.shape
         # 3d reconstruction -> get texture
         pos, vertices,center = self.tduv2t.pre_v3_posandvertice(img)
@@ -117,18 +103,10 @@ class PRNetfacetool:
         texture = self.tduv2t.gettexture(img,pos)
         center = center.astype(int)
         center =tuple(center)
-        # cv2.imshow("texture_1", texture)
-        # cv2.waitKey(0)
-
         # Second person
-
-        # ref_img = cv2.imread("./images/face04.jpg")
         ref_pos , ref_vertices, ref_center = self.tduv2t.pre_v3_posandvertice(ref_img) 
         ref_img = ref_img/255.
         ref_texture = self.tduv2t.gettexture(ref_img, ref_pos)
-
-        # cv2.imshow("texture_2", ref_texture)
-        # cv2.waitKey(0)
         # load eye mask
         uv_face_eye = cv2.imread('./Data/uv-data/uv_face_eyes.png',cv2.IMREAD_GRAYSCALE)/255
         uv_face = cv2.imread('./Data/uv-data/uv_face.png', cv2.IMREAD_GRAYSCALE)/255
@@ -163,7 +141,7 @@ class PRNetfacetool:
         new_image = new_image.astype(imgdtype)
         img = img*255
         img = img.astype(imgdtype)
-        # SeamlessCloneimg = cv2.seamlessClone(new_image, img, facemask_test, center, cv2.NORMAL_CLONE )
+        SeamlessCloneimg = cv2.seamlessClone(new_image, img, facemask_test, center, cv2.NORMAL_CLONE )
         # return SeamlessCloneimg
         return new_image
 

@@ -24,15 +24,15 @@ class FaceSwapVideo(QtWidgets.QMainWindow):
         super(FaceSwapVideo, self).__init__()
         uic.loadUi('./Qtuic/faceswapVideo.ui', self)
         self.update()
+        # self.mediaPlayer = QMediaPlayer(self)
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         self.videoWidget = QtMultimediaWidgets.QVideoWidget()
         # self.videoWidget.setGeometry(self.pos().x(), self.pos().y(), self.width(), self.height())
-        self.mediaPlayer.setVideoOutput(self.videoWidget)
-
-        self.vbox = QtWidgets.QVBoxLayout(self.video_widget)
+        # self.mediaPlayer.setVideoOutput(self.videoWidget)
+        self.vbox = QtWidgets.QVBoxLayout(self)
         self.vbox.addWidget(self.videoWidget)
-
-        # self.video_widget.setLayout(self.vbox)
+        self.video_widget.setLayout(self.vbox)
+        self.mediaPlayer.setVideoOutput(self.videoWidget)
         # self.video_widget.setVisible(False)
 
         self.pushButton_right.clicked.connect(self.getvideofile)
@@ -80,13 +80,15 @@ class FaceSwapVideo(QtWidgets.QMainWindow):
         
 
     def getvideofile(self):
-        fname,_=QtWidgets.QFileDialog.getOpenFileName(self,'打開文件',"D:\\","Video files(*.mp4)")
+        fname,_=QtWidgets.QFileDialog.getOpenFileName(self,'打開文件',"D:\\","Video files(*.mp4 *MOV)")
         if fname:
             self.ori_video_path = fname
-            # self.video_widget.setLayout(self.vbox)
-            # self.video_widget.setVisible(True)
+            # # self.video_widget.setLayout(self.vbox)
+            # # self.video_widget.setVisible(True)
+            
             self.mediaPlayer.setMedia(QtMultimedia.QMediaContent(QtCore.QUrl.fromLocalFile(fname)))
             self.mediaPlayer.play()
+            
         
 
 
@@ -105,8 +107,8 @@ class FaceSwap(QtWidgets.QMainWindow):
         self.pushButton_right.clicked.connect(self.getimgfile_rightbutton)
         self.pushButton_Faceswap.clicked.connect(self.send_sth)
         
-        self.pushButton_left_down.clicked.connect(self.cartoonstyle)
-        self.pushButton_left_down.hide()
+        self.pushButton_left_down.clicked.connect(self.cartoonstyle_left)
+        self.pushButton_right_down.clicked.connect(self.cartoonstyle_right)
         
         
         # self.actionOpenfile.triggered.connect(self.)
@@ -127,7 +129,7 @@ class FaceSwap(QtWidgets.QMainWindow):
         qImg = QtGui.QImage(result.data, w, h, bytesPerline, QtGui.QImage.Format_RGB888).rgbSwapped()
         self.label_mid.setPixmap(QtGui.QPixmap.fromImage(qImg))
     
-    def cartoonstyle(self):
+    def cartoonstyle_left(self):
         if np.all(self.ori_img) != None and PR.IS_face(self.ori_img):
             self.ori_img = cv2.cvtColor(self.ori_img, cv2.COLOR_BGR2RGB)
             self.ori_img = self.turncartoon.inference(self.ori_img)
@@ -140,43 +142,51 @@ class FaceSwap(QtWidgets.QMainWindow):
             self.pushButton_left_down.hide()
         else:
             print('no face')
+    def cartoonstyle_right(self):
+        if np.all(self.ref_img) != None and PR.IS_face(self.ref_img):
+            self.ref_img = cv2.cvtColor(self.ref_img, cv2.COLOR_BGR2RGB)
+            self.ref_img = self.turncartoon.inference(self.ref_img)
+            img = self.ref_img.copy()
+            img = PR.PRNetdrawrect(img)
+            h, w, c = img.shape
+            bytesPerline = 3*w
+            qImg = QtGui.QImage(img.data, w, h, bytesPerline, QtGui.QImage.Format_RGB888).rgbSwapped()
+            self.label_right.setPixmap(QtGui.QPixmap.fromImage(qImg))
+            self.pushButton_right_down.hide()
+        else:
+            print('no face')
 
     def getimgfile_rightbutton(self):
         fname,_=QtWidgets.QFileDialog.getOpenFileName(self,'打開文件',"D:\\","Image files(*.jpg)")
         # self.label_right.setPixmap(QtGui.QPixmap(fname))
         self.ref_img = cv2.imread(fname)
         if (fname):
-            img = self.ref_img.copy()
-            print(img.shape)
-            h, w, c = img.shape
-            n = 1
-            while(h > 540 or w > 540): 
-                n = n-0.1
-                h = int (h*n)
-                w = int (w*n)
-                img = cv2.resize(img, (w, h), interpolation=cv2.INTER_CUBIC)
+            print(self.ref_img.shape)
+            h, w, c = self.ref_img.shape
+            while(h > 1080 or w > 1080): 
+                h = int (h*0.5)
+                w = int (w*0.5)
+                self.ref_img = cv2.resize(self.ref_img, (w, h), interpolation=cv2.INTER_CUBIC)
             
-            img = PR.PRNetdrawrect(img)
+            img = PR.PRNetdrawrect(self.ref_img)
             bytesPerline = 3*w
             qImg = QtGui.QImage(img.data, w, h, bytesPerline, QtGui.QImage.Format_RGB888).rgbSwapped()
             self.label_right.setPixmap(QtGui.QPixmap.fromImage(qImg))
+            self.pushButton_right_down.show()
     
     def getimgfile(self):
         fname,_=QtWidgets.QFileDialog.getOpenFileName(self,'打開文件',"D:\\","Image files(*.jpg)")
         # self.label_right.setPixmap(QtGui.QPixmap(fname))
         self.ori_img = cv2.imread(fname)
         if (fname):
-            img = self.ori_img.copy()
-            print(img.shape)
-            h, w, c = img.shape
-            n = 1
-            while(h > 540 or w > 540): 
-                n = n-0.1
-                h = int (h*n)
-                w = int (w*n)
-                img = cv2.resize(img, (w, h), interpolation=cv2.INTER_CUBIC)
+            print(self.ori_img.shape)
+            h, w, c = self.ori_img.shape
+            while(h > 1080 or w > 1080): 
+                h = int (h*0.5)
+                w = int (w*0.5)
+                self.ori_img = cv2.resize(self.ori_img, (w, h), interpolation=cv2.INTER_CUBIC)
             
-            img = PR.PRNetdrawrect(img)
+            img = PR.PRNetdrawrect(self.ori_img)
             bytesPerline = 3*w
             qImg = QtGui.QImage(img.data, w, h, bytesPerline, QtGui.QImage.Format_RGB888).rgbSwapped()
             self.label_left.setPixmap(QtGui.QPixmap.fromImage(qImg))
@@ -206,24 +216,17 @@ class FaceSwap_thread(QtCore.QThread):
     def get_ref_img(self, array):
         self.ref_img = array
         
-    # def checking(self):
-    #     if not self.imgfaceswap_flag:
-    #         print("ing")
-    #     else:
-    #         self.imgfaceswap_flag = False
-    #         print("face swap")
-    #         self.faceswaps()
     def faceswaps(self):
         if(np.all(self.ori_img) != None and np.all(self.ref_img) != None):
             if PR.IS_face(self.ref_img)  and PR.IS_face(self.ori_img):
                 result = PR.PRNetfaceswap(self.ref_img, self.ori_img)
-                h, w, c = result.shape
-                n = 1
-                while(h > 540 or w > 540): 
-                    n = n-0.1
-                    h = int (h*n)
-                    w = int (w*n)
-                    result = cv2.resize(result, (w, h), interpolation=cv2.INTER_CUBIC)
+                # h, w, c = result.shape
+                # n = 1
+                # while(h > 540 or w > 540): 
+                #     n = n-0.1
+                #     h = int (h*n)
+                #     w = int (w*n)
+                #     result = cv2.resize(result, (w, h), interpolation=cv2.INTER_CUBIC)
                 self.regraph_trigger.emit(result)
             else:
                 print("No face")
