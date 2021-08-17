@@ -73,7 +73,7 @@ if __name__ == '__main__':
     cv2.waitKey(0)
 
 
-    cas = cv2.CascadeClassifier('./data1/haarcascade_frontalface_alt2.xml')
+    cas = cv2.CascadeClassifier('./haarcascade/haarcascade_frontalface_alt2.xml')
     img = cartoon[...,::-1]
     img_gray= cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
     faces = cas.detectMultiScale(img_gray,2,3,0,(30,30))

@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 class threetool:
 
     def __init__(self):
-        self.cas = cv2.CascadeClassifier('./data1/haarcascade_frontalface_alt2.xml')
+        self.cas = cv2.CascadeClassifier('./haarcascade/haarcascade_frontalface_alt2.xml')
         self.pos_predictor = PosPrediction(256, 256)
         self.pos_predictor.restore('./Data/net-data/256_256_resfcn256_weight')
         self.uv_kpt_ind = np.loadtxt('./Data/uv-data/uv_kpt_ind.txt').astype(np.int32)

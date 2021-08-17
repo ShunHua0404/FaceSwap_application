@@ -36,7 +36,7 @@ def angle2matrix(angles):
 class fun001:
     def __init__(self):
         
-        self.cas = cv2.CascadeClassifier('./data1/haarcascade_frontalface_alt2.xml')
+        self.cas = cv2.CascadeClassifier('./haarcascade/haarcascade_frontalface_alt2.xml')
         self.triangles = np.loadtxt('./Data/uv-data/triangles.txt').astype(np.int32)
         self.pos_predictor = PosPrediction(256, 256)
         self.pos_predictor.restore('./Data/net-data/256_256_resfcn256_weight')
@@ -53,7 +53,7 @@ class fun001:
 
     def fun001_1(self, imgg):
         #self.img = img
-        #cas = cv2.CascadeClassifier('./data1/haarcascade_frontalface_alt2.xml')
+        #cas = cv2.CascadeClassifier('./haarcascade/haarcascade_frontalface_alt2.xml')
         img_gray= cv2.cvtColor(imgg,cv2.COLOR_BGR2RGB)
         faces = self.cas.detectMultiScale(img_gray,2,3,0,(30,30))
         bbox = np.array([faces[0,0],faces[0,1],faces[0,0]+faces[0,2],faces[0,1]+faces[0,3]])
