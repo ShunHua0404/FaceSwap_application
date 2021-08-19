@@ -100,13 +100,13 @@ class PRNetfacetool:
         # 3d reconstruction -> get texture
         pos, vertices,center = self.tduv2t.pre_v3_posandvertice(img)
         img = img/255
-        texture = self.tduv2t.gettexture(img,pos)
+        texture = self.tduv2t.get_texture(img,pos)
         center = center.astype(int)
         center =tuple(center)
         # Second person
         ref_pos , ref_vertices, ref_center = self.tduv2t.pre_v3_posandvertice(ref_img) 
         ref_img = ref_img/255.
-        ref_texture = self.tduv2t.gettexture(ref_img, ref_pos)
+        ref_texture = self.tduv2t.get_texture(ref_img, ref_pos)
         # load eye mask
         uv_face_eye = cv2.imread('./Data/uv-data/uv_face_eyes.png',cv2.IMREAD_GRAYSCALE)/255
         uv_face = cv2.imread('./Data/uv-data/uv_face.png', cv2.IMREAD_GRAYSCALE)/255
@@ -115,7 +115,7 @@ class PRNetfacetool:
         new_texture = self.blendImages(ref_texture*255,texture*255,eye_mask)/255.0
 
         ##
-        triangles = self.tduv2t.gettriangles()
+        triangles = self.tduv2t.get_triangles()
 
         vis_colors = np.ones((vertices.shape[0], 1))
         face_mask = rr.render_texture(vertices.T, vis_colors.T, triangles.T, h, w, c = 1)

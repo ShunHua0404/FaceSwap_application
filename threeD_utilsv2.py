@@ -98,11 +98,11 @@ class threetool:
             cv2.circle(img,(int(kps[i,0]),int(kps[i,1])),point_size,(0,255,0),-1)
         return img
 
-    def gettriangles(self):
+    def get_triangles(self):
         tra = self.triangles
         return tra
 
-    def getuvkptind(self):
+    def get_uvkpt_ind(self):
         
         uvkpt = self.uv_kpt_ind
 
@@ -119,7 +119,7 @@ class threetool:
 
         return colors
 
-    def gettexture(self, img, pos):
+    def get_texture(self, img, pos):
         
         texture = cv2.remap(img, pos[:,:,:2].astype(np.float32), None, interpolation=cv2.INTER_NEAREST, borderMode=cv2.BORDER_CONSTANT,borderValue=(0))
 
@@ -166,7 +166,7 @@ class threetool:
         R=Rz.dot(Ry.dot(Rx))
         return R.astype(np.float32)
     
-    def rotateimg(self, angle, vertices, tri_tex, img):
+    def rotate_img(self, angle, vertices, tri_tex, img):
 
         rotated_vertices = vertices.dot(angle.T)
 
