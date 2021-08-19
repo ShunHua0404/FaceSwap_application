@@ -51,38 +51,7 @@ class threetool:
 
         return bbox, cropped_img
 
-    def pre_v2(self, img):
-        img_gray= cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-
-        # faces = self.cas.detectMultiScale(img_gray,2,3,0,(30,30))
-        faces = self.cas.detectMultiScale(img_gray, 1.1, 4)
-        bbox = np.array([faces[0,0],faces[0,1],faces[0,0]+faces[0,2],faces[0,1]+faces[0,3]])
-
-        left = bbox[0]; top = bbox[1]; right = bbox[2]; bottom = bbox[3]
-        old_size = (right - left + bottom - top)/2
-        center = np.array([right - (right - left) / 2.0, bottom - (bottom - top) / 2.0])
-        size = int(old_size*1.6)
-
-        src_pts = np.array([[center[0]-size/2, center[1]-size/2], 
-                            [center[0] - size/2, center[1]+size/2], 
-                            [center[0]+size/2, center[1]-size/2]])
-        DST_PTS = np.array([[0,0], [0,255], [255, 0]]) #图像大小256*256
-        tform = estimate_transform('similarity', src_pts, DST_PTS)
-
-        # img = img/255.
-        cropped_img = warp(img, tform.inverse, output_shape=(256, 256))
-
-        cropped_pos = self.pos_predictor.predict(cropped_img)
-        cropped_vertices = np.reshape(cropped_pos, [-1, 3]).T
-        z = cropped_vertices[2,:].copy()/tform.params[0,0]
-        cropped_vertices[2,:] = 1
-        vertices = np.dot(np.linalg.inv(tform.params), cropped_vertices)
-        vertices = np.vstack((vertices[:2,:], z))
-        original_pos = np.reshape(vertices.T, [256, 256, 3])
-
-        return original_pos
-
-    def pre_v3_posandvertice(self, img):
+    def pre_v3_posandvertice(self, img, get_vertices_center=True):
         img_gray= cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 
         # faces = self.cas.detectMultiScale(img_gray,2,3,0,(30,30))
@@ -110,10 +79,13 @@ class threetool:
         vertices = np.dot(np.linalg.inv(tform.params), cropped_vertices)
         vertices = np.vstack((vertices[:2,:], z))
         original_pos = np.reshape(vertices.T, [256, 256, 3])
-        all_vertices = np.reshape(original_pos, [256*256, -1])
-        vertices = all_vertices[self.face_ind, :]
+        if get_vertices_center == False:
+            return original_pos
+        else:
+            all_vertices = np.reshape(original_pos, [256*256, -1])
+            vertices = all_vertices[self.face_ind, :]
 
-        return original_pos, vertices, center
+            return original_pos, vertices, center
 
     def pre(self, img):
         pos = self.pos_predictor.predict(img)

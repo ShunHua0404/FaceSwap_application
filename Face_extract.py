@@ -33,7 +33,7 @@ img2_gray = cv2.cvtColor(img2.copy(), cv2.COLOR_BGR2GRAY)
 img2_new_face = np.zeros_like(img2)
 result_img = img2.copy()#
 ##Face_1 PRN pre pos
-pos = tduv2t.pre_v2(img)
+pos = tduv2t.pre_v3_posandvertice(img, get_vertices_center=False)
 face_kps = tduv2t.face_kps(pos)#shape = (68,3)
 face_kps_arry = []
 
@@ -51,7 +51,7 @@ face68points_convexhull = cv2.convexHull(points)
 ###########################################
 
 #Face_2 PRN pre pos2
-pos2 = tduv2t.pre_v2(img2)
+pos2 = tduv2t.pre_v3_posandvertice(img2, get_vertices_center=False)
 face2_kps = tduv2t.face_kps(pos2)
 face2_kps_arry = []
 

@@ -21,7 +21,7 @@ class PRNetfacetool:
         if len(IS_detefaced) == 0 :
             return img
         else:
-            pos = self.tduv2t.pre_v2(img)
+            pos = self.tduv2t.pre_v3_posandvertice(img, get_vertices_center=False)
             face_kps = self.tduv2t.face_kps(pos)
             face_kps_arry = []
             for i in range(face_kps.shape[0]):
