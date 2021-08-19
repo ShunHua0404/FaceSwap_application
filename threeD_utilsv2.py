@@ -97,7 +97,7 @@ class threetool:
         src_pts = np.array([[center[0]-size/2, center[1]-size/2], 
                             [center[0] - size/2, center[1]+size/2], 
                             [center[0]+size/2, center[1]-size/2]])
-        DST_PTS = np.array([[0,0], [0,255], [255, 0]]) #图像大小256*256
+        DST_PTS = np.array([[0,0], [0,255], [255, 0]]) #圖像大小256*256
         tform = estimate_transform('similarity', src_pts, DST_PTS)
 
         # img = img/255.
@@ -158,11 +158,11 @@ class threetool:
         all_vertices = np.reshape(pos, [256*256, -1])
         vertices = all_vertices[self.face_ind, :]
 
-        print(vertices.shape) # texutre每个像素对应的3D坐标
-        print(self.triangles.shape) #每个三角网格对应的像素索引
-        print(colors.shape) #每个三角形的颜色
+        print(vertices.shape) # texutre每個像素對應的3D座標
+        print(self.triangles.shape) #每個三角網格對應的像素索引
+        print(colors.shape) #每個三角形的顏色
         #tri_depth = (vertices[self.triangles[:,0],2 ] + vertices[self.triangles[:,1],2] + vertices[self.triangles[:,2],2])/3. 
-        #获取三角形每个顶点的color，平均值作为三角形颜色
+        #獲取三角形每個頂點的color，平均值作為三角形顏色
         tri_tex = (colors[self.triangles[:,0] ,:] + colors[self.triangles[:,1],:] + colors[self.triangles[:,2],:])/3.
         tri_tex = tri_tex*255
         
@@ -198,7 +198,7 @@ class threetool:
 
         rotated_vertices = vertices.dot(angle.T)
 
-        # 把图像拉到画布上
+        # 把圖像拉到畫布上
         # ori_x = np.min(vertices[:,0])
         # ori_y = np.min(vertices[:,1])
         # rot_x = np.min(rotated_vertices[:,0])
