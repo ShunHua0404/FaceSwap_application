@@ -124,9 +124,17 @@ class FaceSwap(QtWidgets.QMainWindow):
 
     def showfaceswapped_img(self, array):
         result = array
-        h, w, c = result.shape    
+        # h, w, c = result.shape
+
+        img = result.copy()
+        h, w, c = img.shape
+        while(w > 512): 
+            h = int (h-1)
+            w = int (w-1)
+        img = cv2.resize(img, (w, h), interpolation=cv2.INTER_CUBIC)    
+        
         bytesPerline = 3*w
-        qImg = QtGui.QImage(result.data, w, h, bytesPerline, QtGui.QImage.Format_RGB888).rgbSwapped()
+        qImg = QtGui.QImage(img.data, w, h, bytesPerline, QtGui.QImage.Format_RGB888).rgbSwapped()
         self.label_mid.setPixmap(QtGui.QPixmap.fromImage(qImg))
     
     def cartoonstyle_left(self):
@@ -169,6 +177,13 @@ class FaceSwap(QtWidgets.QMainWindow):
                 self.ref_img = cv2.resize(self.ref_img, (w, h), interpolation=cv2.INTER_CUBIC)
             
             img = PR.PRNetdrawrect(self.ref_img)
+            
+            h, w, c = img.shape
+            while(w > 512): 
+                h = int (h-1)
+                w = int (w-1)
+            img = cv2.resize(img, (w, h), interpolation=cv2.INTER_CUBIC)
+
             bytesPerline = 3*w
             qImg = QtGui.QImage(img.data, w, h, bytesPerline, QtGui.QImage.Format_RGB888).rgbSwapped()
             self.label_right.setPixmap(QtGui.QPixmap.fromImage(qImg))
@@ -187,6 +202,13 @@ class FaceSwap(QtWidgets.QMainWindow):
                 self.ori_img = cv2.resize(self.ori_img, (w, h), interpolation=cv2.INTER_CUBIC)
             
             img = PR.PRNetdrawrect(self.ori_img)
+
+            h, w, c = img.shape
+            while(w > 512): 
+                h = int (h-1)
+                w = int (w-1)
+            img = cv2.resize(img, (w, h), interpolation=cv2.INTER_CUBIC)
+            
             bytesPerline = 3*w
             qImg = QtGui.QImage(img.data, w, h, bytesPerline, QtGui.QImage.Format_RGB888).rgbSwapped()
             self.label_left.setPixmap(QtGui.QPixmap.fromImage(qImg))
