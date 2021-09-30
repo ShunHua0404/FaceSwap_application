@@ -19,8 +19,21 @@ https://drive.google.com/file/d/1UoE-XuW1SDLUjZmJPkIZ1MLxvQFgmTFH/view
 https://github.com/YadiraF/PRNet/tree/master/Data
 
 ## 安裝環境
-* **python : 3.6.12**
-* 
+* **python==3.6.12**
+
+* **pencv-python==4.1.0.25**
+
+* **PyQt5==5.15.4**
+
+* **matplotlib==3.3.3**
+
+* **face-alignment==1.1.1**
+
+* **tensorflow-gpu==1.14.0**
+
+* **torchvision==0.8.1**
+
+* **dlib==19.21.0****
 
 ## 初始主畫面
 
