@@ -18,6 +18,10 @@ https://drive.google.com/file/d/1UoE-XuW1SDLUjZmJPkIZ1MLxvQFgmTFH/view
 
 https://github.com/YadiraF/PRNet/tree/master/Data
 
+## 安裝環境
+* **python : 3.6.12**
+* 
+
 ## 初始主畫面
 
 ![](./Doc/main.png)
