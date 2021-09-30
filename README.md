@@ -33,7 +33,7 @@ https://github.com/YadiraF/PRNet/tree/master/Data
 
 * **torchvision==0.8.1**
 
-* **dlib==19.21.0****
+* **dlib==19.21.0**
 
 ## 初始主畫面
 
