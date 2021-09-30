@@ -35,6 +35,17 @@ https://github.com/YadiraF/PRNet/tree/master/Data
 
 * **dlib==19.21.0**
 
-## 初始主畫面
+## 執行檔案
 
+```
+python QTmainV2.py
+```
+
+### 初始畫面
 ![](./Doc/main.png)
+
+
+## Reference
+
+* 人像卡通化 ( Photo to Cartoon ) [[GitCode](https://github.com/minivision-ai/photo2cartoon)]
+* Joint 3D Face Reconstruction and Dense Alignment with Position Map Regression Network ( PRNet ) [[GitCode](https://github.com/YadiraF/PRNet)] [[Paper](https://openaccess.thecvf.com/content_ECCV_2018/papers/Yao_Feng_Joint_3D_Face_ECCV_2018_paper.pdf)]
